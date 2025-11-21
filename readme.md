@@ -1,74 +1,105 @@
 # JWT Debugger Pro
 
-Advanced, client-side JSON Web Token debugger and security analyzer for decoding, verifying, building, and stress-testing JWTs directly in the browser. [web:1][web:16]
+Advanced, client-side JSON Web Token debugger and security analyzer for decoding, verifying, building, and stress-testing JWTs directly in the browser.
 
-## Overview
+## 🚀 Live Demo
 
-JWT Debugger Pro is a single-page web application that lets you inspect JWT headers and claims, verify signatures, and experiment with different signing algorithms and claim sets. [web:5][web:17]  
-All operations (decode, encode, sign, verify, and analysis) are performed entirely in the browser using the Web Crypto API and Base64URL processing, so no tokens are sent to any backend. [web:5][web:21]
+**[Launch JWT Debugger Pro](https://bara-almustafa.github.io/jwt_debugger_pro/)**
 
-## Features
+---
 
-### Decode and verify
+## ✨ Key Features
 
-- Paste any JWT and see it split into header, payload, and signature with clear visual separation. [web:1][web:100]  
-- Pretty-printed JSON views for header and payload with basic validation and error feedback when the structure is invalid. [web:1][web:16]  
-- Time-based claim inspection for `exp`, `iat`, and `nbf`, shown as both Unix timestamps and human-readable datetimes, with status indicators such as valid, expired, or not yet valid. [web:75][web:85]  
-- Signature verification for common algorithms (HS256/384/512, RS256/384/512, ES256/384/512) using a shared secret or PEM-formatted public key. [web:22][web:24]  
+### 🔍 **Decode & Verify**
+- **Real-time Decoding**: Instantly parse headers, payloads, and signatures.
+- **Visual Validation**: Color-coded status for valid/invalid tokens.
+- **Time-Travel Debugging**: Human-readable timestamps for `exp`, `iat`, and `nbf` with visual "Active/Expired" status indicators.
+- **Signature Verification**: Supports HMAC (HS256/384/512) and RSA/ECDSA verification.
 
-### Encode and sign
+### 🛠️ **Encode & Sign**
+- **Interactive Builder**: Craft custom tokens using a clean JSON editor.
+- **Quick Actions**: One-click buttons to add standard claims (e.g., "Add Expiration").
+- **Key Management**: Input custom secrets or private keys to sign your own tokens.
 
-- Interactive header editor with default `{ "alg": "HS256", "typ": "JWT" }` and algorithm dropdown that keeps header and algorithm selection in sync. [web:16][web:10]  
-- Payload editor with quick-add buttons for common claims like `exp`, `iat`, `nbf`, `sub`, `iss`, and `aud`. [web:75][web:104]  
-- Support for symmetric HMAC-based algorithms and asymmetric RSA or ECDSA signatures via text areas for keys. [web:22][web:24]  
-- On-demand JWT generation showing the final compact token plus metadata like length or size. [web:16][web:10]  
+### 🛡️ **Security Analyzer**
+A built-in vulnerability scanner that checks for:
+- ❌ **"None" Algorithm**: Detects unsecured tokens.
+- 🔓 **Weak Secrets**: Identifies short or dictionary-based secrets.
+- ⚠️ **Algorithm Confusion**: Warns about potential key mismanagement risks.
+- 🕷️ **Header Injection**: Checks for dangerous `jku`/`jwk` parameters.
 
-### Security analyzer
+### 🔨 **Brute Force Tool** (Educational)
+- **Dictionary Attack Simulator**: Test token strength against a list of common weak secrets.
+- **Performance Metrics**: View attempts per second to understand cryptographic strength.
+- **Disclaimer**: STRICTLY for educational use on tokens you own.
 
-- Detection of tokens using the `none` algorithm, flagging them as a critical vulnerability because they bypass signature verification. [web:3][web:32]  
-- Heuristics for weak HMAC secrets based on short length and common dictionary values that are susceptible to brute-force attacks. [web:23][web:28]  
-- Warnings about algorithm confusion patterns where an RSA public key might be misused as an HMAC secret if server-side validation is flawed. [web:3][web:32]  
-- Checks for missing or weak claims (such as absence of `exp` or `iss`) and presence of risky header parameters like `jku` or `jwk` that can enable key injection. [web:3][web:32]  
+---
 
-### Brute-force and secret tooling (educational)
+## 🔒 Privacy First
+**100% Client-Side Execution**: 
+- This application runs entirely in your browser.
+- No backend server is involved.
+- Your tokens, keys, and secrets **never** leave your device.
+- You can verify this by inspecting the source code or running offline.
 
-- Dictionary-based weak-secret tester that tries a supplied wordlist against HS* tokens to demonstrate how quickly poor secrets can be recovered. [web:23][web:33]  
-- Live progress display with attempts, duration, and approximate attempts per second to show the impact of secret entropy on attack cost. [web:23][web:28]  
-- Strong secret generator that produces random secrets of configurable length for use as HMAC keys or API secrets. [web:23][web:63]  
-- Prominent educational and ethical-use warnings clarifying that these capabilities are intended for testing systems you own or are authorized to assess. [web:32][web:35]  
+---
 
-### Token history and documentation
+## 💻 Tech Stack
+- **Core**: HTML5, CSS3, Vanilla JavaScript (ES6+)
+- **Crypto**: Native [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) (SubtleCrypto)
+- **Styling**: CSS Grid & Flexbox (No external UI frameworks)
+- **Deployment**: GitHub Pages
 
-- In-memory history of recent tokens (for example the last ten) that you can quickly reload into the decoder for iterative testing. [web:47][web:96]  
-- Embedded documentation tab explaining JWT structure, standard claims, common signing algorithms, and typical attack vectors. [web:16][web:88]  
+---
 
-## JWT basics (for users of the tool)
+## 🏃‍♂️ How to Run Locally
 
-A JWT is a compact token composed of three Base64URL-encoded parts separated by dots: header, payload, and signature. [web:1][web:100]  
-The header usually declares the token type (`typ`) and signing algorithm (`alg`) such as HS256 or RS256. [web:1][web:16]  
-The payload contains claims like subject, issuer, audience, and timestamps, which are readable by anyone and should not contain secrets unless encrypted. [web:16][web:10]  
-The signature is computed over the encoded header and payload using a secret or private key and is what protects the token from tampering when verified correctly. [web:10][web:32]  
+If you want to run this tool on your own machine:
 
-## Tech stack
+1. **Clone the repository**
+git clone https://github.com/bara-almustafa/jwt_debugger_pro.git
+2. **Navigate to the folder**
+cd jwt_debugger_pro
 
-- Static single-page application written in modern JavaScript, HTML, and CSS with no external runtime dependencies. [web:47][web:96]  
-- Web Crypto API for HMAC, RSA, and ECDSA signature operations in supported browsers. [web:21][web:89]  
-- Custom Base64URL encode and decode utilities that follow the JWT specification for safe URL transport and signature correctness. [web:16][web:74]  
-- Responsive layout using CSS Grid and Flexbox with a dark, security-focused theme suitable for desktop and mobile. [web:46][web:98]  
+text
 
-## Getting started (local usage)
+3. **Launch**
+Simply open `index.html` in your web browser.
 
-1. Clone or download the repository into a local directory on your machine. [web:52][web:101]  
-2. Open the `index.html` file directly in a modern browser, or serve the folder with a simple static file server if you prefer. [web:98][web:101]  
-3. Paste an existing JWT into the decode panel or build a new one in the encode panel to start exploring. [web:16][web:5]  
+*Note: For the best experience with Web Crypto APIs, it is recommended to use a simple local server:*
+Python 3
+python -m http.server 8000
 
-For a more realistic setup, running a small local HTTP server (for example with Python or Node) avoids issues with some browsers’ local file restrictions. [web:98][web:101]  
+Node.js
+npx http-server
 
-## Deploying to GitHub Pages
+text
+Then visit `http://localhost:8000`.
 
-This project is designed to be hosted as a static site from a Git repository using GitHub Pages. [web:52][web:98]  
+---
 
-Typical workflow:
+## 🤝 Contributing
 
-1. Create a new public repository and add the project files (including `index.html`) to the root of the repository. [web:52][web:65]  
-2. Commit and push the files to
+Contributions are welcome! If you have ideas for new security checks or UI improvements:
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## ⚠️ Disclaimer
+
+This tool is provided for **educational and testing purposes only**. The author allows the use of this software only on systems where you have explicit permission to test. Misuse of this software for malicious activities is strictly prohibited.
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+*Built with ❤️ for the security community.*

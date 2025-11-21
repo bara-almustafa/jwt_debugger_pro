@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced JWT Debugger - Professional Token Analysis Tool</title>
+    <style>
+        :root {
+  --bg-primary: #0a0e27;
+  --bg-secondary: #16213e;
+  --bg-card: #1a1a2e;
+  --accent-primary: #00d4ff;
+  --accent-secondary: #00a8cc;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --success: #00ff88;
+  --warning: #ffaa00;
+  --error: #ff4444;
+  --critical: #ff0066;
+  --border: rgba(0, 212, 255, 0.2);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1a2e 100%);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  padding: 30px 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.5em;
+  color: var(--accent-primary);
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+  margin-bottom: 10px;
+}
+
+.header .subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1em;
+}
+
+.privacy-banner {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--accent-primary);
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.tab:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+.tab.active {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  font-size: 1.3em;
+  color: var(--accent-primary);
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+textarea, input[type="text"], input[type="number"], select {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+textarea:focus, input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+textarea {
+  min-height: 150px;
+}
+
+.textarea-large {
+  min-height: 200px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+button {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+button:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+button.secondary:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-primary);
+}
+
+button.small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.json-viewer {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 15px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  overflow-x: auto;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.json-viewer pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.token-structure {
+  display: flex;
+  gap: 5px;
+  margin: 15px 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow-x: auto;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.token-part {
+  padding: 8px;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.token-header { background: rgba(255, 100, 100, 0.2); color: #ffaaaa; }
+.token-payload { background: rgba(100, 255, 100, 0.2); color: #aaffaa; }
+.token-signature { background: rgba(100, 100, 255, 0.2); color: #aaaaff; }
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.status-valid {
+  background: rgba(0, 255, 136, 0.2);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.status-invalid {
+  background: rgba(255, 68, 68, 0.2);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.status-warning {
+  background: rgba(255, 170, 0, 0.2);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+.claim-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.claim-name {
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: 5px;
+}
+
+.claim-value {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.claim-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 5px;
+}
+
+.vulnerability-item {
+  border-left: 4px solid;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+}
+
+.severity-critical {
+  border-color: var(--critical);
+  background: rgba(255, 0, 102, 0.1);
+}
+
+.severity-high {
+  border-color: var(--error);
+  background: rgba(255, 68, 68, 0.1);
+}
+
+.severity-medium {
+  border-color: var(--warning);
+  background: rgba(255, 170, 0, 0.1);
+}
+
+.severity-low {
+  border-color: var(--accent-primary);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.vulnerability-title {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.severity-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 30px;
+  background: var(--bg-secondary);
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 15px 0;
+  border: 1px solid var(--border);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  transition: width 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bg-primary);
+  font-weight: 600;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 15px 0;
+}
+
+.history-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-primary);
+  transform: translateX(5px);
+}
+
+.history-timestamp {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.history-preview {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 212, 255, 0.5);
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+  font-weight: 600;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.warning-banner {
+  background: rgba(255, 170, 0, 0.1);
+  border: 2px solid var(--warning);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  color: var(--warning);
+  font-weight: 600;
+  text-align: center;
+}
+
+.doc-section {
+  margin-bottom: 30px;
+}
+
+.doc-section h3 {
+  color: var(--accent-primary);
+  margin-bottom: 15px;
+}
+
+.doc-section ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.doc-section li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.doc-section li:last-child {
+  border-bottom: none;
+}
+
+.json-key { color: #ff6b6b; }
+.json-string { color: #4ecdc4; }
+.json-number { color: #ffe66d; }
+.json-boolean { color: #a8e6cf; }
+.json-null { color: #95a5a6; }
+
+@media (max-width: 768px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 1.8em;
+  }
+  
+  .tabs {
+    overflow-x: auto;
+  }
+  
+  .tab {
+    white-space: nowrap;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.info-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 5px;
+}
+
+.algorithm-info {
+  background: rgba(0, 212, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Advanced JWT Debugger</h1>
+            <p class="subtitle">Professional Token Analysis &amp; Security Testing Tool</p>
+        </div>
+
+        <div class="privacy-banner">
+            🔒 All operations performed locally - no data transmitted to any server
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="decode">Decode &amp; Verify</div>
+            <div class="tab" data-tab="encode">Encode &amp; Sign</div>
+            <div class="tab" data-tab="security">Security Analyzer</div>
+            <div class="tab" data-tab="bruteforce">Brute Force Tools</div>
+            <div class="tab" data-tab="history">Token History</div>
+            <div class="tab" data-tab="docs">Documentation</div>
+        </div>
+
+        <!-- DECODE TAB -->
+        <div id="decode-tab" class="tab-content active">
+            <div class="split-layout">
+                <div>
+                    <div class="card">
+                        <div class="card-header">JWT Token Input</div>
+                        <label>Paste JWT Token:</label>
+                        <textarea id="jwt-input" class="textarea-large" placeholder="Paste your JWT token here..."></textarea>
+                        <div id="token-status"></div>
+                        <div id="token-structure"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <div class="card-header">Decoded Token</div>
+                        <h4 style="color: #ffaaaa; margin-bottom: 10px;">Header</h4>
+                        <div class="json-viewer">
+                            <button class="copy-btn small" onclick="copyToClipboard('decoded-header')">Copy</button>
+                            <pre id="decoded-header"></pre>
+                        </div>
+
+                        <h4 style="color: #aaffaa; margin-bottom: 10px;">Payload</h4>
+                        <div class="json-viewer">
+                            <button class="copy-btn small" onclick="copyToClipboard('decoded-payload')">Copy</button>
+                            <pre id="decoded-payload"></pre>
+                        </div>
+
+                        <h4 style="color: #aaaaff; margin-bottom: 10px;">Signature</h4>
+                        <div class="json-viewer">
+                            <button class="copy-btn small" onclick="copyToClipboard('decoded-signature')">Copy</button>
+                            <pre id="decoded-signature"></pre>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">Time-based Claims</div>
+                        <div id="time-claims"></div>
+                    </div>
+
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">Signature Verification</div>
+                        <div class="form-group">
+                            <label>Algorithm:</label>
+                            <select id="verify-algorithm">
+                                <option value="HS256">HS256</option>
+                                <option value="HS384">HS384</option>
+                                <option value="HS512">HS512</option>
+                                <option value="RS256">RS256</option>
+                                <option value="RS384">RS384</option>
+                                <option value="RS512">RS512</option>
+                                <option value="ES256">ES256</option>
+                                <option value="ES384">ES384</option>
+                                <option value="ES512">ES512</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="secret-input-group">
+                            <label>Secret Key (for HMAC algorithms):</label>
+                            <input type="text" id="verify-secret" placeholder="Enter secret key...">
+                        </div>
+                        <div class="form-group" id="public-key-input-group" style="display: none;">
+                            <label>Public Key (PEM format for RSA/ECDSA):</label>
+                            <textarea id="verify-public-key" placeholder="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----"></textarea>
+                        </div>
+                        <button onclick="verifySignature()">Verify Signature</button>
+                        <div id="verification-result" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENCODE TAB -->
+        <div id="encode-tab" class="tab-content">
+            <div class="split-layout">
+                <div>
+                    <div class="card">
+                        <div class="card-header">Header Editor</div>
+                        <div class="form-group">
+                            <label>Algorithm:</label>
+                            <select id="encode-algorithm" onchange="updateHeaderAlgorithm()">
+                                <option value="HS256">HS256</option>
+                                <option value="HS384">HS384</option>
+                                <option value="HS512">HS512</option>
+                                <option value="RS256">RS256</option>
+                                <option value="RS384">RS384</option>
+                                <option value="RS512">RS512</option>
+                                <option value="ES256">ES256</option>
+                                <option value="ES384">ES384</option>
+                                <option value="ES512">ES512</option>
+                            </select>
+                        </div>
+                        <label>Header JSON:</label>
+                        <textarea id="header-json" class="textarea-large"></textarea>
+                    </div>
+
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">Payload Editor</div>
+                        <div class="button-group">
+                            <button class="secondary small" onclick="addClaim('exp')">Add exp (1h)</button>
+                            <button class="secondary small" onclick="addClaim('iat')">Add iat</button>
+                            <button class="secondary small" onclick="addClaim('nbf')">Add nbf</button>
+                            <button class="secondary small" onclick="addClaim('sub')">Add sub</button>
+                            <button class="secondary small" onclick="addClaim('aud')">Add aud</button>
+                            <button class="secondary small" onclick="addClaim('iss')">Add iss</button>
+                        </div>
+                        <label>Payload JSON:</label>
+                        <textarea id="payload-json" class="textarea-large"></textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <div class="card-header">Signing</div>
+                        <div class="form-group" id="encode-secret-group">
+                            <label>Secret Key:</label>
+                            <input type="text" id="encode-secret" placeholder="Enter secret key...">
+                        </div>
+                        <div class="form-group" id="encode-private-key-group" style="display: none;">
+                            <label>Private Key (PEM format):</label>
+                            <textarea id="encode-private-key" placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"></textarea>
+                        </div>
+                        <button onclick="generateJWT()">Generate JWT</button>
+                        <div class="algorithm-info" id="algorithm-info"></div>
+                    </div>
+
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">Generated JWT</div>
+                        <textarea id="generated-jwt" readonly></textarea>
+                        <div style="margin-top: 10px; display: flex; gap: 10px;">
+                            <button class="secondary" onclick="copyToClipboard('generated-jwt')">Copy Token</button>
+                            <button class="secondary" onclick="loadGeneratedToken()">Load to Decoder</button>
+                        </div>
+                        <div id="token-info" style="margin-top: 10px; font-size: 12px; color: var(--text-secondary);"></div>
+                    </div>
+
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">Secret Generator</div>
+                        <div class="form-group">
+                            <label>Secret Length (bytes):</label>
+                            <select id="secret-length">
+                                <option value="32">32 bytes (256 bits)</option>
+                                <option value="64">64 bytes (512 bits)</option>
+                                <option value="128">128 bytes (1024 bits)</option>
+                                <option value="256">256 bytes (2048 bits)</option>
+                            </select>
+                        </div>
+                        <button onclick="generateSecret()">Generate Strong Secret</button>
+                        <div id="generated-secret" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECURITY ANALYZER TAB -->
+        <div id="security-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">Vulnerability Scanner</div>
+                <div id="vulnerability-results"></div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">Security Recommendations</div>
+                <div id="security-recommendations"></div>
+            </div>
+        </div>
+
+        <!-- BRUTE FORCE TAB -->
+        <div id="bruteforce-tab" class="tab-content">
+            <div class="warning-banner">
+                ⚠️ FOR EDUCATIONAL PURPOSES ONLY - Only use on tokens you own or have permission to test
+            </div>
+
+            <div class="split-layout">
+                <div>
+                    <div class="card">
+                        <div class="card-header">Weak Secret Dictionary Attack</div>
+                        <div class="form-group">
+                            <label>JWT Token to Attack:</label>
+                            <textarea id="bruteforce-token"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Wordlist (one secret per line):</label>
+                            <textarea id="wordlist" class="textarea-large"></textarea>
+                        </div>
+                        <button onclick="startBruteForce()">Start Brute Force</button>
+                        <button class="secondary" onclick="stopBruteForce()">Stop</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <div class="card-header">Attack Progress</div>
+                        <div id="bruteforce-status"></div>
+                        <div class="progress-bar">
+                            <div id="bruteforce-progress" class="progress-fill" style="width: 0%;">0%</div>
+                        </div>
+                        <div id="bruteforce-result" style="margin-top: 15px;"></div>
+                        <div id="bruteforce-stats" style="margin-top: 10px; font-size: 13px; color: var(--text-secondary);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div id="history-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">Token History (Last 10)</div>
+                <button class="secondary" onclick="clearHistory()">Clear History</button>
+                <div id="history-list" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- DOCUMENTATION TAB -->
+        <div id="docs-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">JWT Quick Reference</div>
+                <div class="doc-section">
+                    <h3>JWT Structure</h3>
+                    <p>A JWT consists of three parts separated by dots (.): <code>Header.Payload.Signature</code></p>
+                    <ul>
+                        <li><strong>Header:</strong> Contains token type (JWT) and signing algorithm</li>
+                        <li><strong>Payload:</strong> Contains claims (statements about an entity)</li>
+                        <li><strong>Signature:</strong> Used to verify the token hasn't been altered</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Supported Algorithms</h3>
+                    <ul>
+                        <li><strong>HS256/HS384/HS512:</strong> HMAC with SHA-256/384/512 (symmetric, shared secret)</li>
+                        <li><strong>RS256/RS384/RS512:</strong> RSA Signature with SHA-256/384/512 (asymmetric, public/private key)</li>
+                        <li><strong>ES256/ES384/ES512:</strong> ECDSA Signature with SHA-256/384/512 (asymmetric, elliptic curve)</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Registered Claims</h3>
+                    <ul>
+                        <li><strong>iss</strong> (Issuer): Identifies who issued the JWT</li>
+                        <li><strong>sub</strong> (Subject): Identifies the subject of the JWT</li>
+                        <li><strong>aud</strong> (Audience): Identifies the recipients of the JWT</li>
+                        <li><strong>exp</strong> (Expiration Time): Time after which JWT expires (Unix timestamp)</li>
+                        <li><strong>nbf</strong> (Not Before): Time before which JWT must not be accepted</li>
+                        <li><strong>iat</strong> (Issued At): Time at which JWT was issued</li>
+                        <li><strong>jti</strong> (JWT ID): Unique identifier for the JWT</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Security Best Practices</h3>
+                    <ul>
+                        <li>Always use strong, random secrets (minimum 256 bits for HS256)</li>
+                        <li>Use RS256 or ES256 for production applications over HS256</li>
+                        <li>Always include exp claim to prevent token replay attacks</li>
+                        <li>Validate iss, aud, and sub claims on the server side</li>
+                        <li>Never include sensitive data in the payload (it's not encrypted)</li>
+                        <li>Use HTTPS to transmit tokens</li>
+                        <li>Implement proper key rotation policies</li>
+                        <li>Set short expiration times and use refresh tokens</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Common Attack Vectors</h3>
+                    <ul>
+                        <li><strong>None Algorithm Attack:</strong> Setting alg to 'none' to bypass signature verification</li>
+                        <li><strong>Weak Secret Brute Force:</strong> Using common/short secrets that can be cracked</li>
+                        <li><strong>Algorithm Confusion:</strong> Switching from RS256 to HS256, using public key as HMAC secret</li>
+                        <li><strong>JKU Header Injection:</strong> Pointing jku to attacker-controlled key server</li>
+                        <li><strong>KID Manipulation:</strong> SQL injection or path traversal via kid parameter</li>
+                        <li><strong>Token Replay:</strong> Reusing stolen tokens without proper expiration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
